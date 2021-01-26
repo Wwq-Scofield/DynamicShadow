@@ -1,0 +1,4 @@
+rootProject.name='Self_Shadow'
+include ':app'
+include ':shadow_demo'
+include ':pluginlibrary'
