@@ -243,4 +243,6 @@ public interface GeneratedHostActivityDelegate {
   boolean dispatchKeyEvent(KeyEvent arg0);
 
   boolean dispatchPopulateAccessibilityEvent(AccessibilityEvent arg0);
+
+    void setResult(int arg0);
 }

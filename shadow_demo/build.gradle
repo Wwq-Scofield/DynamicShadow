@@ -6,11 +6,11 @@ android {
 
     defaultConfig {
         applicationId "com.wwq.self_shadow"
-        minSdkVersion 14
+        minSdkVersion 19
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
-
+        multiDexEnabled true
     }
 
     buildTypes {
@@ -19,11 +19,14 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: 'libs', include: ['*.jar','*.aar'])
 
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation project(path: ':pluginlibrary')

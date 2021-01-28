@@ -13,6 +13,7 @@ import android.graphics.Canvas;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
@@ -442,6 +443,7 @@ public abstract class GeneratedShadowActivityDelegate  implements GeneratedHostA
 
   @Override
   public void onApplyThemeResource(Resources.Theme arg0, int arg1, boolean arg2) {
+    Log.d("shadow_ca","pluginActivity= "+pluginActivity);
     pluginActivity.onApplyThemeResource(arg0, arg1, arg2);
   }
 
@@ -548,5 +550,10 @@ public abstract class GeneratedShadowActivityDelegate  implements GeneratedHostA
   @Override
   public boolean dispatchPopulateAccessibilityEvent(AccessibilityEvent arg0) {
     return pluginActivity.dispatchPopulateAccessibilityEvent(arg0);
+  }
+
+  @Override
+  public void setResult(int arg0) {
+      pluginActivity.setResult(arg0);
   }
 }

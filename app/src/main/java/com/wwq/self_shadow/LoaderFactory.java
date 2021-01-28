@@ -20,6 +20,8 @@ package com.wwq.self_shadow;
 
 import android.content.Context;
 
+import com.wwq.self_shadow.pps.PluginLoaderImpl;
+
 public interface LoaderFactory {
     PluginLoaderImpl buildLoader(String uuid, Context context);
 }

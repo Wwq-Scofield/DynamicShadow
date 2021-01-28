@@ -1460,6 +1460,7 @@ abstract class GeneratedPluginContainerActivity extends Activity implements Gene
     super.onCreate(arg0);
   }
 
+
   @Override
   public void superOnNewIntent(Intent arg0) {
     super.onNewIntent(arg0);
@@ -1582,6 +1583,7 @@ abstract class GeneratedPluginContainerActivity extends Activity implements Gene
 
   @Override
   public void superSetResult(int arg0) {
+    Log.d("shadow_ca","superSetResult ");
     super.setResult(arg0);
   }
 

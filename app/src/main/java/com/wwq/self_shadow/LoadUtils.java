@@ -12,8 +12,8 @@ import android.webkit.WebView;
 
 import java.util.concurrent.CountDownLatch;
 
-public class LoadUtils {
-    public static void startService(String s) {
+public class LoadUtils  {
+    public   void startService(String s) {
         Log.d(Constant.TAG,"s = "+s);
 //        try {
 //            Object o = getClassLoader().loadClass("com.wwq.shadow_demo.TestService").newInstance();

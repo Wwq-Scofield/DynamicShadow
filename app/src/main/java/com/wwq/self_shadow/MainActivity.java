@@ -1,7 +1,7 @@
 package com.wwq.self_shadow;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import dalvik.system.BaseDexClassLoader;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -11,135 +11,101 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
-import android.content.res.XmlResourceParser;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Looper;
 import android.os.RemoteException;
 import android.util.Log;
-import android.webkit.WebView;
+import android.view.View;
 
-import com.wwq.pluginlibrary.DelegateProviderHolder;
 import com.wwq.pluginlibrary.GlobalContext;
 import com.wwq.pluginlibrary.PluginClassLoader;
 import com.wwq.pluginlibrary.ShadowContext;
 import com.wwq.self_shadow.plugin.PluginDefaultActivity;
 import com.wwq.self_shadow.plugin.ShadowActivityDelegate;
-import com.wwq.self_shadow.plugin.ShadowProvider;
+import com.wwq.self_shadow.pps.FailedException;
+import com.wwq.self_shadow.pps.PpsController;
 
 import java.io.File;
-import java.util.concurrent.CountDownLatch;
 
 public class MainActivity extends AppCompatActivity {
-    public static PluginClassLoader baseDexClassLoader;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        GlobalContext.setApplication(this.getApplicationContext());
-        DelegateProviderHolder.setDelegateProvider("test",new ShadowProvider());
-//        connectPPService();
-//        startService(new Intent(this,TestService.class));
-
+        setContentView(R.layout.test);
+        Log.d(Constant.TAG,"MainActivity onCreate");
+        startService(new Intent(this,TestService.class));
         new Thread(new Runnable() {
             @Override
             public void run() {
                 File file = new File(getFilesDir(), "shadow_demo-debug.apk");
                 CopyFileFromAssets.copy(MainActivity.this,"shadow_demo-debug.apk",file);
-                final Resources resource = createResource();
-                ShadowActivityDelegate.mPluginResources = resource;
-
-                File odexFile = new File(getCacheDir(), "");
-                if (file.exists()) {
-                    Log.d(Constant.TAG, "apkPath " + file.getAbsolutePath());
-                } else {
-                    Log.d(Constant.TAG, "apkPath 不存在，" + file.getAbsolutePath());
-                }
-                ClassLoader classLoader = MainActivity.class.getClassLoader();
-                baseDexClassLoader = new PluginClassLoader(file.getAbsolutePath(), odexFile, null,classLoader);
                 MainActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        startActivity(new Intent(MainActivity.this, PluginDefaultActivity.class));
+
+//                        startActivity(new Intent(MainActivity.this,TestActivity.class));
+                        connectPPService();
                     }
                 });
 
             }
         }).start();
 
-    }
-    public static ApplicationInfo applicationInfo;
-    private Resources createResource() {
-        File file = new File(getFilesDir(), "shadow_demo-debug.apk");
-        PackageInfo packageArchiveInfo = getPackageManager().getPackageArchiveInfo(file.getAbsolutePath(),
-                PackageManager.GET_ACTIVITIES
-                        | PackageManager.GET_META_DATA
-                        | PackageManager.GET_SERVICES
-                        | PackageManager.GET_PROVIDERS
-                        | PackageManager.GET_SIGNATURES);
-        packageArchiveInfo.applicationInfo.nativeLibraryDir = null;
-        ShadowContext shadowContext = new ShadowContext(MainActivity.this, 0);
-        File dataDir = null;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            dataDir = shadowContext.getDataDir();
-        } else {
-            dataDir = new File(shadowContext.getFilesDir(), "dataDir");
-        }
-        dataDir.mkdirs();
-        packageArchiveInfo.applicationInfo.dataDir = dataDir.getAbsolutePath();
-        try {
-            Resources resources = create(packageArchiveInfo, file.getAbsolutePath(), this);
-            applicationInfo = packageArchiveInfo.applicationInfo;
-            String string = resources.getString(R.string.app_name);
-            Log.d("shadow_ca", "string = " + string);
-            return resources;
-
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-            Log.e("shadow_ca", "msg = " + e.toString());
-        }
-        return null;
-    }
-
-    public Resources create(PackageInfo packageArchiveInfo, String archiveFilePath,
-                            final Context hostAppContext) throws PackageManager.NameNotFoundException {
-        //先用宿主context初始化一个WebView，以便WebView的逻辑去修改sharedLibraryFiles，将webview.apk添加进去
-        final CountDownLatch latch = new CountDownLatch(1);
-        new Handler(Looper.getMainLooper()).post(new Runnable() {
+        new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                new WebView(hostAppContext);
-                latch.countDown();
+//                try {
+////                    ppsController.exit();
+//                } catch (RemoteException e) {
+//                    e.printStackTrace();
+//                } catch (FailedException e) {
+//                    e.printStackTrace();
+//                }
             }
-        });
+        },3000);
+    }
+
+    public void loadPlugin(View view){
         try {
-            latch.await();
-        } catch (InterruptedException e) {
+            ppsController.startPluginActivity();
+            // TODO:
+            //  1. 如果是在主进程中，通过actiivty  startActivityForResult是可以启动的
+//            Intent intent = new Intent(this, PluginDefaultActivity.class);
+//            startActivityForResult(intent,2000);
+            // TODO:
+            //  2. 如果是在子进程中，从宿主启动插件，插件也是在子进程启动的，没有actiivty支撑startActivityForResult的环境，因为
+            //  startActivityForResult是activity的方法
+            // TODO:
+            //  3. 如果一定要做，通过启动一个透明的activity来作为这个startForResult的环境，再通过通信告诉宿主
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        PackageManager packageManager = hostAppContext.getPackageManager();
-        packageArchiveInfo.applicationInfo.publicSourceDir = archiveFilePath;
-        packageArchiveInfo.applicationInfo.sourceDir = archiveFilePath;
-        packageArchiveInfo.applicationInfo.sharedLibraryFiles = hostAppContext.getApplicationInfo().sharedLibraryFiles;
-        return packageManager.getResourcesForApplication(packageArchiveInfo.applicationInfo);
     }
 
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d(Constant.TAG,"requestCode ="+requestCode+" resultCode= "+resultCode);
+    }
 
+    PpsController ppsController;
     private void connectPPService() {
         File file = new File(getFilesDir(), "shadow_demo-debug.apk");
         CopyFileFromAssets.copy(MainActivity.this,"shadow_demo-debug.apk",file);
         Intent intent = new Intent();
 
         intent.setComponent(new ComponentName(getApplication().getApplicationContext(), "com.wwq.self_shadow.PPService"));
-        getApplicationContext().bindService(intent, new ServiceConnection() {
+        startService(intent);
+        GlobalContext.getAppContext().bindService(intent, new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
-                Log.d(Constant.TAG,"onServiceConnected ： "+name.getClassName());
-                PpsController ppsController = PPService.wrapBinder(service);
+                Log.d(Constant.TAG,"onServiceConnected ： "+name.getClassName() );
+                ppsController = PPService.wrapBinder(service);
                 try {
-                    ppsController.setUUID("123");
+                    ppsController.setUUID("uuuuuuuuuu");
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 } catch (FailedException e) {
@@ -152,6 +118,17 @@ public class MainActivity extends AppCompatActivity {
                 } catch (FailedException e) {
                     e.printStackTrace();
                 }
+                try {
+                    Log.d(Constant.TAG,"userInfo = "+ppsController.getUserInfo().name);
+//                    Log.d(Constant.TAG,"userInfo = "+Constant.userInfo.name);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                } catch (FailedException e) {
+                    e.printStackTrace();
+                }catch (NullPointerException e){
+                    e.printStackTrace();
+                }
+
             }
 
             @Override
@@ -160,4 +137,6 @@ public class MainActivity extends AppCompatActivity {
             }
         },BIND_AUTO_CREATE);
     }
+
+
 }

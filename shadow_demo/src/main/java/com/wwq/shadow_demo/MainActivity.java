@@ -1,7 +1,10 @@
 package com.wwq.shadow_demo;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,6 +30,15 @@ public class MainActivity extends ShadowActivity implements ITest {
         setContentView(R.layout.wwq);
         Toast.makeText(this,"我是插件弹出的toast",Toast.LENGTH_SHORT).show();
         Log.d("shadow_ca","plugin onCreate");
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                String test = null;
+                 setResult(1000);
+                finish();
+
+            }
+        },3000);
     }
 
     @Override
@@ -39,4 +51,6 @@ public class MainActivity extends ShadowActivity implements ITest {
         super.onResume();
         Log.d("shadow_ca","plugin onResume---");
     }
+
+
 }

@@ -31,6 +31,9 @@ import android.widget.TextView;
 
 import org.w3c.dom.Text;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+
 import static com.wwq.pluginlibrary.DelegateProvider.LOADER_VERSION_KEY;
 import static com.wwq.pluginlibrary.DelegateProvider.PROCESS_ID_KEY;
 
@@ -76,14 +79,6 @@ public class PluginContainerActivity extends GeneratedPluginContainerActivity im
     @Override
     public void setContentView(View view) {
         Log.d("shadow_ca","- - - setContentView "+view);
-//        if(view instanceof TextView){
-//            TextView textView = (TextView) view;
-//            textView.setTextSize(30);
-//            textView.setText("我是插件的demo");
-//            textView.setTextColor(Color.WHITE);
-//            view=textView;
-//            Log.e("shadow_ca","- - - is textView");
-//        }
         super.setContentView(view);
 
     }
@@ -104,7 +99,7 @@ public class PluginContainerActivity extends GeneratedPluginContainerActivity im
     final protected void onCreate(Bundle savedInstanceState) {
         isBeforeOnCreate = false;
         mHostTheme = null;//释放资源
-
+        Log.e("shadow_ca","currentProcess service 3 : "+getCurrentProcessName());
         boolean illegalIntent = isIllegalIntent(savedInstanceState);
         if (illegalIntent) {
             super.hostActivityDelegate = null;
@@ -122,7 +117,34 @@ public class PluginContainerActivity extends GeneratedPluginContainerActivity im
             System.exit(0);
         }
     }
-
+    public static String getCurrentProcessName() {
+        FileInputStream in = null;
+        try {
+            String fn = "/proc/self/cmdline";
+            in = new FileInputStream(fn);
+            byte[] buffer = new byte[256];
+            int len = 0;
+            int b;
+            while ((b = in.read()) > 0 && len < buffer.length) {
+                buffer[len++] = (byte) b;
+            }
+            if (len > 0) {
+                String s = new String(buffer, 0, len, "UTF-8");
+                return s;
+            }
+        } catch (Throwable e) {
+            e.printStackTrace();
+        } finally {
+            if (in != null){
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return null;
+    }
     /**
      * IllegalIntent指的是这些情况下的启动：
      * 1.插件版本变化之后，残留于系统中的PendingIntent或系统因回收内存杀死进程残留的任务栈而启动。

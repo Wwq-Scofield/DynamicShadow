@@ -493,7 +493,7 @@ public abstract class GeneratedPluginActivity extends ShadowContext implements W
   }
 
   public void setResult(int arg0) {
-    hostActivityDelegator.setResult(arg0);
+    hostActivityDelegator.superSetResult(arg0);
   }
 
   public void requestShowKeyboardShortcuts() {
