@@ -16,7 +16,7 @@ import com.wwq.pluginlibrary.ShadowActivity;
 import androidx.appcompat.app.AppCompatActivity;
 
 
-public class MainActivity extends ShadowActivity implements ITest {
+public class MainActivity extends AppCompatActivity implements ITest {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -34,8 +34,8 @@ public class MainActivity extends ShadowActivity implements ITest {
             @Override
             public void run() {
                 String test = null;
-                 setResult(1000);
-                finish();
+
+                startActivity(new Intent(MainActivity.this,SecendActivity.class));
 
             }
         },3000);

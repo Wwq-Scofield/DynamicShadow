@@ -34,8 +34,8 @@ public class MainActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                File file = new File(getFilesDir(), "shadow_demo-debug.apk");
-                CopyFileFromAssets.copy(MainActivity.this, "shadow_demo-debug.apk", file);
+                File file = new File(getFilesDir(), Constant.apk);
+                CopyFileFromAssets.copy(MainActivity.this, Constant.apk, file);
                 MainActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -79,20 +79,22 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     try {
-                        ppsController.loadPlugin();
+                        Constant.apk = Constant.apk_max;
+                        ppsController.loadPlugin("max");
                         MainActivity.this.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 tips.setVisibility(View.GONE);
                                 try {
                                     ppsController.startPluginActivity();
-                                } catch (RemoteException e) {
+                                } catch (Exception e) {
                                     e.printStackTrace();
                                 }
                             }
                         });
                     } catch (RemoteException e) {
                         e.printStackTrace();
+                        Log.e(Constant.TAG,e.toString());
                     }
                 }
             }).start();
@@ -102,7 +104,31 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
+    public void loadPluginMin(View view){
+        tips.setVisibility(View.VISIBLE);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Constant.apk = Constant.apk_min;
+                    ppsController.loadPlugin("min");
+                    MainActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            tips.setVisibility(View.GONE);
+                            try {
+                                ppsController.startPluginActivity();
+                            } catch (RemoteException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -112,41 +138,41 @@ public class MainActivity extends AppCompatActivity {
     PpsController ppsController;
 
     private void connectPPService() {
-        File file = new File(getFilesDir(), "shadow_demo-debug.apk");
-        CopyFileFromAssets.copy(MainActivity.this, "shadow_demo-debug.apk", file);
+        File file = new File(getFilesDir(), Constant.apk);
+        CopyFileFromAssets.copy(MainActivity.this, Constant.apk, file);
         Intent intent = new Intent();
 
-        intent.setComponent(new ComponentName(getApplication().getApplicationContext(), "com.wwq.self_shadow.PPService"));
+        intent.setComponent(new ComponentName(getApplication().getApplicationContext(), "com.wwq.self_shadow.PPService2"));
         startService(intent);
         GlobalContext.getAppContext().bindService(intent, new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
                 Log.d(Constant.TAG, "onServiceConnected ： " + name.getClassName());
                 ppsController = PPService.wrapBinder(service);
-                try {
-                    ppsController.setUUID("uuuuuuuuuu");
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                } catch (FailedException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    ppsController.startService("4345");
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                } catch (FailedException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    Log.d(Constant.TAG, "userInfo = " + ppsController.getUserInfo().name);
-//                    Log.d(Constant.TAG,"userInfo = "+Constant.userInfo.name);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                } catch (FailedException e) {
-                    e.printStackTrace();
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
-                }
+//                try {
+//                    ppsController.setUUID("uuuuuuuuuu");
+//                } catch (RemoteException e) {
+//                    e.printStackTrace();
+//                } catch (FailedException e) {
+//                    e.printStackTrace();
+//                }
+//                try {
+//                    ppsController.startService("4345");
+//                } catch (RemoteException e) {
+//                    e.printStackTrace();
+//                } catch (FailedException e) {
+//                    e.printStackTrace();
+//                }
+//                try {
+//                    Log.d(Constant.TAG, "userInfo = " + ppsController.getUserInfo().name);
+////                    Log.d(Constant.TAG,"userInfo = "+Constant.userInfo.name);
+//                } catch (RemoteException e) {
+//                    e.printStackTrace();
+//                } catch (FailedException e) {
+//                    e.printStackTrace();
+//                } catch (NullPointerException e) {
+//                    e.printStackTrace();
+//                }
 
             }
 

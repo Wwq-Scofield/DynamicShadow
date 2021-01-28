@@ -20,10 +20,13 @@
         </activity>
         <service android:name=".PPService"
             android:process=":plugin"/>
+
+
         <service android:name=".TestService"/>
         <activity
             android:name=".plugin.PluginDefaultActivity"
             android:multiprocess="true"
+            android:launchMode="standard"
             android:theme="@style/PluginContainerActivity"/>
         <activity android:name=".TestActivity"
             android:process=":test"/>

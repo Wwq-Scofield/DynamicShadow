@@ -108,7 +108,7 @@ public class PluginContainerActivity extends GeneratedPluginContainerActivity im
         }
         Log.e(TAG, "onCreate: hostActivityDelegate= "+hostActivityDelegate);
         if (hostActivityDelegate != null) {
-            hostActivityDelegate.onCreate(savedInstanceState);
+            hostActivityDelegate.onCreate(getIntent().getExtras());
         } else {
             //这里是进程被杀后重启后走到，当需要恢复fragment状态的时候，由于系统保留了TAG，会因为找不到fragment引起crash
             super.onCreate(null);

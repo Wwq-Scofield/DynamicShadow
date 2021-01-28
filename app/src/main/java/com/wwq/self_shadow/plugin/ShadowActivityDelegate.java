@@ -116,6 +116,7 @@ public class ShadowActivityDelegate extends GeneratedShadowActivityDelegate impl
 
     @Override
     public void onCreate(Bundle arg0) {
+
         Log.d("shadow_ca", "onCreate..."+mPluginResources);
         Log.e(Constant.TAG,"currentProcess activity 1: "+getCurrentProcessName());
 //        try {
@@ -123,7 +124,10 @@ public class ShadowActivityDelegate extends GeneratedShadowActivityDelegate impl
             mDependenciesInjected=true;
         Object o1 = null;
         try {
-            o1 = baseDexClassLoader.loadClass("com.wwq.shadow_demo.MainActivity").newInstance();
+            String className = arg0.getString("className");
+            Log.d(Constant.TAG,"className = "+className);
+            // "com.wwq.shadow_demo.MainActivity"
+            o1 = baseDexClassLoader.loadClass(className).newInstance();
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (InstantiationException e) {
@@ -142,6 +146,7 @@ public class ShadowActivityDelegate extends GeneratedShadowActivityDelegate impl
             shadowActivity.setPluginClassLoader(baseDexClassLoader);
             shadowActivity.setApplicationInfo(PPService.applicationInfo);
             shadowActivity.setHostContextAsBase((Context) mHostActivityDelegator.getHostActivity());
+            shadowActivity.setPluginComponentLauncher(new PluginComponentLauncherImpl());
             super.pluginActivity = shadowActivity;
             Log.e(Constant.TAG,"pluginActivity 2: "+pluginActivity);
             shadowActivity.setTheme(PPService.applicationInfo.theme);

@@ -8,6 +8,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
@@ -22,9 +23,12 @@ import com.wwq.self_shadow.pps.PPSBinder;
 import com.wwq.self_shadow.pps.PpsController;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 import androidx.annotation.Nullable;
+import dalvik.system.BaseDexClassLoader;
 
 import static com.wwq.self_shadow.plugin.ShadowActivityDelegate.getCurrentProcessName;
 
@@ -76,7 +80,7 @@ public class PPService extends Service {
     }
 
     public void startService() throws Exception {
-        File file = new File(getFilesDir(), "shadow_demo-debug.apk");
+        File file = new File(getFilesDir(), Constant.apk);
         File odexFile = new File(getCacheDir(), "");
         if (file.exists()) {
             Log.d(Constant.TAG, "apkPath " + file.getAbsolutePath());
@@ -85,11 +89,11 @@ public class PPService extends Service {
         }
         Log.e(Constant.TAG,"currentProcess service: "+getCurrentProcessName());
 
-//        Object o = baseDexClassLoader.loadClass("com.wwq.shadow_demo.TestService").newInstance();
-//        final ShadowService service = (ShadowService) o;
+        Object o = baseDexClassLoader.loadClass("com.wwq.shadow_demo.TestService").newInstance();
+        final ShadowService service = (ShadowService) o;
 //        if (isUiThread()) {
-//            service.onCreate();
-//            service.onStartCommand(new Intent(), 0, 10);
+            service.onCreate();
+            service.onStartCommand(new Intent(), 0, 10);
 //        } else {
 //            final CountDownLatch waitUiLock = new CountDownLatch(1);
 //            mUiHandler.post(new Runnable() {
@@ -130,8 +134,8 @@ public class PPService extends Service {
     }
     public static ApplicationInfo applicationInfo;
     public static PluginClassLoader baseDexClassLoader;
-    private Resources createResource() {
-        File file = new File(getFilesDir(), "shadow_demo-debug.apk");
+    private Resources createResource(String pluginKey) {
+        File file = new File(getFilesDir(), Constant.apk);
         PackageInfo packageArchiveInfo = getPackageManager().getPackageArchiveInfo(file.getAbsolutePath(),
                 PackageManager.GET_ACTIVITIES
                         | PackageManager.GET_META_DATA
@@ -144,7 +148,7 @@ public class PPService extends Service {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             dataDir = shadowContext.getDataDir();
         } else {
-            dataDir = new File(shadowContext.getFilesDir(), "dataDir");
+            dataDir = new File(shadowContext.getFilesDir(), pluginKey);
         }
         dataDir.mkdirs();
         packageArchiveInfo.applicationInfo.dataDir = dataDir.getAbsolutePath();
@@ -178,6 +182,9 @@ public class PPService extends Service {
     public void starPluginActivity() {
         Intent intent = new Intent(this, PluginDefaultActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Bundle bundle= new Bundle();
+        bundle.putString("className","com.wwq.shadow_demo.MainActivity");
+        intent.putExtras(bundle);
         startActivity(intent);
         Log.e(Constant.TAG,"currentProcess service 2 : "+getCurrentProcessName());
     }
@@ -187,18 +194,28 @@ public class PPService extends Service {
 //        startActivity(intent);
 //        Log.e(Constant.TAG,"currentProcess service 2 : "+getCurrentProcessName());
     }
-
-    public void loadPlugin(){
-        if(baseDexClassLoader!=null){
+    Map<String, PluginClassLoader> classLoaderMap = new HashMap<>();
+    Map<String, Resources> resourcesMap = new HashMap<>();
+    public void loadPlugin(String pluginKey){
+        Log.e(Constant.TAG, "start load plugin");
+        if(classLoaderMap.containsKey(pluginKey)&&classLoaderMap.get(pluginKey)!=null){
+            baseDexClassLoader=classLoaderMap.get(pluginKey);
+            ShadowActivityDelegate.mPluginResources =resourcesMap.get(pluginKey);
+            Log.d(Constant.TAG, "baseDexClassLoader 1 ="+baseDexClassLoader);
             return;
         }
-        Resources resource = createResource();
+        Resources resource = createResource(pluginKey);
         Log.d(Constant.TAG, "service onCreate,resource="+resource);
         ShadowActivityDelegate.mPluginResources =resource;
+        resourcesMap.put(pluginKey,resource);
         ClassLoader classLoader = PPService.class.getClassLoader();
-        File odexFile = new File(getCacheDir(), "");
-        File file = new File(getFilesDir(), "shadow_demo-debug.apk");
+        File odexFile = new File(getCacheDir(), pluginKey);
+        if(!odexFile.exists()){
+            odexFile.mkdirs();
+        }
+        File file = new File(getFilesDir(), Constant.apk);
         baseDexClassLoader = new PluginClassLoader(file.getAbsolutePath(), odexFile, null,classLoader);
-
+        Log.d(Constant.TAG, "baseDexClassLoader 2 ="+baseDexClassLoader);
+        classLoaderMap.put(pluginKey,baseDexClassLoader);
     }
 }

@@ -66,7 +66,8 @@ public class PPSBinder extends Binder {
                 reply.writeNoException();
                 break;
             case TRANSACTION_LOADPLUGIN:
-                ppService.loadPlugin();
+                ppService.loadPlugin(_arg0);
+                reply.writeNoException();
                 break;
         }
         return super.onTransact(code, data, reply, flags);
