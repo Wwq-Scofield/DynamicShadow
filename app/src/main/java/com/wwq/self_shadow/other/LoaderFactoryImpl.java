@@ -1,7 +1,9 @@
-package com.wwq.self_shadow;
+package com.wwq.self_shadow.other;
 
 import android.content.Context;
 
+import com.wwq.self_shadow.other.DynamicPluginLoader;
+import com.wwq.self_shadow.other.LoaderFactory;
 import com.wwq.self_shadow.pps.PluginLoaderBinder;
 import com.wwq.self_shadow.pps.PluginLoaderImpl;
 

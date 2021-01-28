@@ -43,13 +43,6 @@ public class PPService extends Service {
             Log.e(Constant.TAG, "service 创建了多实例");
         }
         Log.d(Constant.TAG, "service onCreate");
-        Resources resource = createResource();
-        Log.d(Constant.TAG, "service onCreate,resource="+resource);
-        ShadowActivityDelegate.mPluginResources =resource;
-        ClassLoader classLoader = PPService.class.getClassLoader();
-        File odexFile = new File(getCacheDir(), "");
-        File file = new File(getFilesDir(), "shadow_demo-debug.apk");
-        baseDexClassLoader = new PluginClassLoader(file.getAbsolutePath(), odexFile, null,classLoader);
 
     }
 
@@ -92,23 +85,23 @@ public class PPService extends Service {
         }
         Log.e(Constant.TAG,"currentProcess service: "+getCurrentProcessName());
 
-        Object o = baseDexClassLoader.loadClass("com.wwq.shadow_demo.TestService").newInstance();
-        final ShadowService service = (ShadowService) o;
-        if (isUiThread()) {
-            service.onCreate();
-            service.onStartCommand(new Intent(), 0, 10);
-        } else {
-            final CountDownLatch waitUiLock = new CountDownLatch(1);
-            mUiHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    service.onCreate();
-                    service.onStartCommand(new Intent(), 0, 10);
-                    waitUiLock.countDown();
-                }
-            });
-            waitUiLock.await();
-        }
+//        Object o = baseDexClassLoader.loadClass("com.wwq.shadow_demo.TestService").newInstance();
+//        final ShadowService service = (ShadowService) o;
+//        if (isUiThread()) {
+//            service.onCreate();
+//            service.onStartCommand(new Intent(), 0, 10);
+//        } else {
+//            final CountDownLatch waitUiLock = new CountDownLatch(1);
+//            mUiHandler.post(new Runnable() {
+//                @Override
+//                public void run() {
+//                    service.onCreate();
+//                    service.onStartCommand(new Intent(), 0, 10);
+//                    waitUiLock.countDown();
+//                }
+//            });
+//            waitUiLock.await();
+//        }
     }
 
     private boolean isUiThread() {
@@ -193,5 +186,19 @@ public class PPService extends Service {
 //        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //        startActivity(intent);
 //        Log.e(Constant.TAG,"currentProcess service 2 : "+getCurrentProcessName());
+    }
+
+    public void loadPlugin(){
+        if(baseDexClassLoader!=null){
+            return;
+        }
+        Resources resource = createResource();
+        Log.d(Constant.TAG, "service onCreate,resource="+resource);
+        ShadowActivityDelegate.mPluginResources =resource;
+        ClassLoader classLoader = PPService.class.getClassLoader();
+        File odexFile = new File(getCacheDir(), "");
+        File file = new File(getFilesDir(), "shadow_demo-debug.apk");
+        baseDexClassLoader = new PluginClassLoader(file.getAbsolutePath(), odexFile, null,classLoader);
+
     }
 }

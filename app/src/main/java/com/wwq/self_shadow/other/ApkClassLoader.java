@@ -16,9 +16,11 @@
  *
  */
 
-package com.wwq.self_shadow;
+package com.wwq.self_shadow.other;
 
 import android.os.Build;
+
+import com.wwq.self_shadow.other.InstalledApk;
 
 import dalvik.system.DexClassLoader;
 

@@ -21,7 +21,7 @@ package com.wwq.self_shadow.pps;
 import android.content.res.Resources;
 import android.os.RemoteException;
 
-import com.wwq.self_shadow.InstalledApk;
+import com.wwq.self_shadow.other.InstalledApk;
 
 public interface UuidManager {
 

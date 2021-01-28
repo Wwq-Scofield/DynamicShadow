@@ -4,7 +4,7 @@ import android.os.Binder;
 import android.os.Parcel;
 import android.os.RemoteException;
 
-import com.wwq.self_shadow.DynamicPluginLoader;
+import com.wwq.self_shadow.other.DynamicPluginLoader;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;

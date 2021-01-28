@@ -18,6 +18,7 @@ import static android.os.Parcelable.PARCELABLE_WRITE_RETURN_VALUE;
  *
  */
 public class PPSBinder extends Binder {
+
     static final String DESCRIPTOR = PPSBinder.class.getName();
     static final int TRANSACTION_CODE_NO_EXCEPTION = 0;
     static final int TRANSACTION_CODE_FAILED_EXCEPTION = 1;
@@ -26,7 +27,7 @@ public class PPSBinder extends Binder {
     static final int TRANSACTION_getUserInfo= 4;
     static final int TRANSACTION_EXIT= 5;
     static final int TRANSACTION_START_ACTIVITY= 6;
-
+    public static final int TRANSACTION_LOADPLUGIN = 7;
 
     private PPService ppService;
 
@@ -63,6 +64,9 @@ public class PPSBinder extends Binder {
             case TRANSACTION_START_ACTIVITY:
                 ppService.starPluginActivity();
                 reply.writeNoException();
+                break;
+            case TRANSACTION_LOADPLUGIN:
+                ppService.loadPlugin();
                 break;
         }
         return super.onTransact(code, data, reply, flags);

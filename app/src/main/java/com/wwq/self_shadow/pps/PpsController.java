@@ -132,4 +132,16 @@ public class PpsController {
             _data.recycle();
         }
     }
+    public void loadPlugin() throws RemoteException {
+        Parcel _data = Parcel.obtain();
+        Parcel _reply = Parcel.obtain();
+        try {
+            _data.writeInterfaceToken(PPSBinder.DESCRIPTOR);
+            mRemote.transact(PPSBinder.TRANSACTION_LOADPLUGIN, _data, _reply, 0);
+        } finally {
+            _reply.recycle();
+            _data.recycle();
+        }
+    }
+
 }

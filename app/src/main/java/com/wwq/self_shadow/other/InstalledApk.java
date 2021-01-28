@@ -16,7 +16,7 @@
  *
  */
 
-package com.wwq.self_shadow;
+package com.wwq.self_shadow.other;
 
 import android.os.Parcel;
 import android.os.Parcelable;
