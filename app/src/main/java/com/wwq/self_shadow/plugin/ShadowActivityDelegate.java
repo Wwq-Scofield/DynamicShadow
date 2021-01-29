@@ -83,7 +83,6 @@ public class ShadowActivityDelegate extends GeneratedShadowActivityDelegate impl
 
     @Override
     public Resources getResources() {
-        Log.d("shadow_ca ", "mMixResources : " + mMixResources +" mDependenciesInjected ="+mDependenciesInjected);
         if (mDependenciesInjected) {
             return mMixResources;
         } else {
@@ -139,7 +138,9 @@ public class ShadowActivityDelegate extends GeneratedShadowActivityDelegate impl
 //            final Service service = (Service) o1;
 //            Log.d("shadow_ca", "onCreate...shadowActivity ="+o);
 //            service.onCreate();
+
             shadowActivity = (ShadowActivity) o1;
+
             Log.d("shadow_ca", "onCreate...1 ="+shadowActivity);
             shadowActivity.setHostActivityDelegator(mHostActivityDelegator);
             shadowActivity.setPluginResources(mPluginResources);

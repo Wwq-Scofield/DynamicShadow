@@ -34,8 +34,7 @@ public class MainActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                File file = new File(getFilesDir(), Constant.apk);
-                CopyFileFromAssets.copy(MainActivity.this, Constant.apk, file);
+
                 MainActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -74,12 +73,15 @@ public class MainActivity extends AppCompatActivity {
             //  startActivityForResult是activity的方法
             // TODO:
             //  3. 如果一定要做，通过启动一个透明的activity来作为这个startForResult的环境，再通过通信告诉宿主
+//            startActivities();
             tips.setVisibility(View.VISIBLE);
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
                         Constant.apk = Constant.apk_max;
+                        File file = new File(getFilesDir(), Constant.apk);
+                        CopyFileFromAssets.copy(MainActivity.this, Constant.apk, file);
                         ppsController.loadPlugin("max");
                         MainActivity.this.runOnUiThread(new Runnable() {
                             @Override
@@ -111,6 +113,8 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 try {
                     Constant.apk = Constant.apk_min;
+                    File file = new File(getFilesDir(), Constant.apk);
+                    CopyFileFromAssets.copy(MainActivity.this, Constant.apk, file);
                     ppsController.loadPlugin("min");
                     MainActivity.this.runOnUiThread(new Runnable() {
                         @Override
@@ -118,13 +122,14 @@ public class MainActivity extends AppCompatActivity {
                             tips.setVisibility(View.GONE);
                             try {
                                 ppsController.startPluginActivity();
-                            } catch (RemoteException e) {
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }
                     });
                 } catch (RemoteException e) {
                     e.printStackTrace();
+                    Log.d(Constant.TAG, "--- "+e.toString());
                 }
             }
         }).start();
@@ -141,8 +146,7 @@ public class MainActivity extends AppCompatActivity {
         File file = new File(getFilesDir(), Constant.apk);
         CopyFileFromAssets.copy(MainActivity.this, Constant.apk, file);
         Intent intent = new Intent();
-
-        intent.setComponent(new ComponentName(getApplication().getApplicationContext(), "com.wwq.self_shadow.PPService2"));
+        intent.setComponent(new ComponentName(getApplication().getApplicationContext(), "com.wwq.self_shadow.PPService"));
         startService(intent);
         GlobalContext.getAppContext().bindService(intent, new ServiceConnection() {
             @Override

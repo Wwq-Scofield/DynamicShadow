@@ -143,7 +143,13 @@ public class PPService extends Service {
                         | PackageManager.GET_PROVIDERS
                         | PackageManager.GET_SIGNATURES);
         packageArchiveInfo.applicationInfo.nativeLibraryDir = null;
-        ShadowContext shadowContext = new ShadowContext(this, 0);
+        ShadowContext shadowContext = null;
+        try {
+            shadowContext= new ShadowContext(this, 0);
+        }catch (Exception e){
+            Log.d(Constant.TAG, "createResource: "+e);
+        }
+
         File dataDir = null;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             dataDir = shadowContext.getDataDir();
@@ -161,7 +167,7 @@ public class PPService extends Service {
 
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
-            Log.e("shadow_ca", "msg = " + e.toString());
+            Log.e(Constant.TAG, "msg = " + e.toString());
         }
         return null;
     }
@@ -197,7 +203,12 @@ public class PPService extends Service {
     Map<String, PluginClassLoader> classLoaderMap = new HashMap<>();
     Map<String, Resources> resourcesMap = new HashMap<>();
     public void loadPlugin(String pluginKey){
-        Log.e(Constant.TAG, "start load plugin");
+        if(pluginKey.equalsIgnoreCase("min")){
+            Constant.apk = Constant.apk_min;
+        }else{
+            Constant.apk = Constant.apk_max;
+        }
+        Log.e(Constant.TAG, "start load plugin : "+pluginKey);
         if(classLoaderMap.containsKey(pluginKey)&&classLoaderMap.get(pluginKey)!=null){
             baseDexClassLoader=classLoaderMap.get(pluginKey);
             ShadowActivityDelegate.mPluginResources =resourcesMap.get(pluginKey);

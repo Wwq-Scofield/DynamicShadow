@@ -16,9 +16,8 @@ import com.wwq.pluginlibrary.ShadowActivity;
 import androidx.appcompat.app.AppCompatActivity;
 
 
-public class MainActivity extends AppCompatActivity implements ITest {
+public class MainActivity extends ShadowActivity implements ITest {
 
-    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("shadow_ca","plugin onCreate---");

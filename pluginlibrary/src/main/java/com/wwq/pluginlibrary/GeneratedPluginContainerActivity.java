@@ -134,7 +134,6 @@ abstract class GeneratedPluginContainerActivity extends Activity implements Gene
 
   @Override
   public Resources getResources() {
-      Log.d("shadow_ca ","getResources : "+hostActivityDelegate);
     if (hostActivityDelegate != null) {
       return hostActivityDelegate.getResources();
     } else {
