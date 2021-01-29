@@ -3,6 +3,10 @@ package com.wwq.self_shadow;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -18,17 +22,20 @@ import com.wwq.self_shadow.pps.FailedException;
 import com.wwq.self_shadow.pps.PpsController;
 
 import java.io.File;
+import java.lang.reflect.Method;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
     private ProgressBar tips;
+    private TextView tvtips;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.test);
         tips = findViewById(R.id.tips);
+        tvtips = findViewById(R.id.tvtips);
         Log.d(Constant.TAG, "MainActivity onCreate");
         startService(new Intent(this, TestService.class));
         new Thread(new Runnable() {
@@ -134,6 +141,41 @@ public class MainActivity extends AppCompatActivity {
             }
         }).start();
     }
+
+    public void loadResource(View view){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+
+
+                File file = new File(getFilesDir(), "resource.apk");
+                CopyFileFromAssets.copy(MainActivity.this,"resource.apk", file);
+                final Resources resTest = Utils.createResource(MainActivity.this, file, "resTest");
+                final int identifier = resTest.getIdentifier("plugin_color", "color", "com.wwq.restest");
+                Log.d(Constant.TAG," - "+resTest.getColor(identifier));
+                int identifier1 = resTest.getIdentifier("plugin_tips", "string", "com.wwq.restest");
+                final int identifier2 = resTest.getIdentifier("waring", "drawable", "com.wwq.restest");
+                final CharSequence string = resTest.getText(identifier1);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        tvtips.setText(string);
+                        tvtips.setTextColor(resTest.getColor(identifier));
+                        tvtips.setBackgroundDrawable(resTest.getDrawable(identifier2));
+
+                    }
+                });
+                Log.d(Constant.TAG,"string= "+string);
+            }catch (Exception e){
+                    Log.d(Constant.TAG," - "+e.toString());
+            }
+            }
+        }).start();
+
+
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

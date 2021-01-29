@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">我是shadowDemo</string>
+    <string name="plugin_tips">我是pluginTips</string>
 </resources>

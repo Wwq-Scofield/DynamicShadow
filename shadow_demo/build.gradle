@@ -5,7 +5,7 @@ android {
     buildToolsVersion "29.0.3"
 
     defaultConfig {
-        applicationId "com.wwq.self_shadow"
+        applicationId "com.wwq.restest"
         minSdkVersion 19
         targetSdkVersion 29
         versionCode 1

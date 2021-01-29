@@ -161,7 +161,7 @@ public class PPService extends Service {
         try {
             Resources resources = create(packageArchiveInfo, file.getAbsolutePath(), this);
             applicationInfo = packageArchiveInfo.applicationInfo;
-//            String string = resources.getString(R.string.app_name);
+//            String string = resources.getIdentifier("strings",)
 //            Log.d("shadow_ca", "string = " + string);
             return resources;
 
