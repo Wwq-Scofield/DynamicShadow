@@ -34,6 +34,7 @@ import com.wwq.pluginlibrary.ShadowActivity;
 import com.wwq.self_shadow.Constant;
 import com.wwq.self_shadow.MainActivity;
 import com.wwq.self_shadow.PPService;
+import com.wwq.self_shadow.PackageResManager;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -145,12 +146,12 @@ public class ShadowActivityDelegate extends GeneratedShadowActivityDelegate impl
             shadowActivity.setHostActivityDelegator(mHostActivityDelegator);
             shadowActivity.setPluginResources(mPluginResources);
             shadowActivity.setPluginClassLoader(baseDexClassLoader);
-            shadowActivity.setApplicationInfo(PPService.applicationInfo);
+            shadowActivity.setApplicationInfo(PackageResManager.applicationInfo);
             shadowActivity.setHostContextAsBase((Context) mHostActivityDelegator.getHostActivity());
             shadowActivity.setPluginComponentLauncher(new PluginComponentLauncherImpl());
             super.pluginActivity = shadowActivity;
             Log.e(Constant.TAG,"pluginActivity 2: "+pluginActivity);
-            shadowActivity.setTheme(PPService.applicationInfo.theme);
+            shadowActivity.setTheme(PackageResManager.applicationInfo.theme);
             shadowActivity.onCreate(arg0);
             Log.e(Constant.TAG,"currentProcess activity 2: "+getCurrentProcessName());
 //        } catch (Exception e) {

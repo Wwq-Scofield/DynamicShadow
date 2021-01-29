@@ -12,7 +12,9 @@ import com.wwq.pluginlibrary.ShadowContext;
 
 import java.io.File;
 
-public class Utils {
+public class PackageResManager {
+    public static ApplicationInfo applicationInfo;
+
     public static Resources createResource(Context context,File file,String pluginKey) {
         PackageInfo packageArchiveInfo = context.getPackageManager().getPackageArchiveInfo(file.getAbsolutePath(),
                 PackageManager.GET_ACTIVITIES
@@ -30,6 +32,7 @@ public class Utils {
         }
         dataDir.mkdirs();
         packageArchiveInfo.applicationInfo.dataDir = dataDir.getAbsolutePath();
+        applicationInfo = packageArchiveInfo.applicationInfo;
         try {
             Resources resources = create(packageArchiveInfo, file.getAbsolutePath(), context);
             return resources;

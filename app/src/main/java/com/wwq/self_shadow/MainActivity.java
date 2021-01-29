@@ -1,7 +1,6 @@
 package com.wwq.self_shadow;
 
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.res.Resources;
@@ -150,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
 
                     File file = new File(getFilesDir(), "resource.apk");
                     CopyFileFromAssets.copy(MainActivity.this, "resource.apk", file);
-                    final Resources resTest = Utils.createResource(MainActivity.this, file, "resTest");
+                    final Resources resTest = PackageResManager.createResource(MainActivity.this, file, "resTest");
                     //下面注释的这种方式获取resource，需要安装才能获取到
 //                    Context packageContext = createPackageContext("com.wwq.restest", Context.CONTEXT_IGNORE_SECURITY);
 //                    final Resources resTest = packageContext.getResources();
