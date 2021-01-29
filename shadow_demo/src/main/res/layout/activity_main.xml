@@ -11,5 +11,5 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center"
-        android:text="我是MINI插件的第二个view" />
+        android:text="我是MAX插件的第二个view" />
 </LinearLayout>

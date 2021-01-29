@@ -12,5 +12,5 @@
         android:layout_gravity="center"
         android:gravity="center"
         android:id="@+id/wwqId"
-        android:text="我是MINI插件的资源layout View" />
+        android:text="我是MAX插件的资源layout View" />
 </LinearLayout>
