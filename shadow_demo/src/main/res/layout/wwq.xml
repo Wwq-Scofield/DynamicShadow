@@ -11,5 +11,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center"
+        android:id="@+id/wwqId"
         android:text="我是MINI插件的资源layout View" />
 </LinearLayout>

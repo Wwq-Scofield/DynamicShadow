@@ -7,12 +7,15 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
+import android.content.res.XmlResourceParser;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,12 +33,14 @@ import androidx.appcompat.app.AppCompatActivity;
 public class MainActivity extends AppCompatActivity {
     private ProgressBar tips;
     private TextView tvtips;
+    private LinearLayout parent;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.test);
         tips = findViewById(R.id.tips);
         tvtips = findViewById(R.id.tvtips);
+        parent = findViewById(R.id.parent);
         Log.d(Constant.TAG, "MainActivity onCreate");
         startService(new Intent(this, TestService.class));
         new Thread(new Runnable() {
@@ -163,7 +168,6 @@ public class MainActivity extends AppCompatActivity {
                         tvtips.setText(string);
                         tvtips.setTextColor(resTest.getColor(identifier));
                         tvtips.setBackgroundDrawable(resTest.getDrawable(identifier2));
-
                     }
                 });
                 Log.d(Constant.TAG,"string= "+string);
